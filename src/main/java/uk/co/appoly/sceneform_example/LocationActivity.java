@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,8 +72,14 @@ public class LocationActivity extends AppCompatActivity {
     // Our ARCore-Location scene
     private LocationScene locationScene;
 
-    private float longitude = 38.003002f;
-    private float latitude = 39.016086f;
+    private float latitude = 34.002985f;
+    private float longitude = -81.016097f;
+
+    private TextView deviceLong;
+    private TextView deviceLat;
+    private TextView ARLong;
+    private TextView ARLat;
+    private CheckBox itemAdded;
 
 
     @Override
@@ -82,6 +89,11 @@ public class LocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sceneform);
         arSceneView = findViewById(R.id.ar_scene_view);
+        deviceLong = findViewById(R.id.deviceLong);
+        deviceLat = findViewById(R.id.deviceLat);
+        ARLong = findViewById(R.id.ARLong);
+        ARLat = findViewById(R.id.ARLat);
+        itemAdded = findViewById(R.id.checkBox);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -135,6 +147,11 @@ public class LocationActivity extends AppCompatActivity {
                             Log.v("Lat:", String.valueOf(location.getLatitude()));
                             Log.v("Accuracy:", String.valueOf(location.getAccuracy()));
                             Log.v("Altitude:", String.valueOf(location.getAltitude()));
+
+                            deviceLat.setText(String.valueOf(location.getLatitude()));
+                            deviceLong.setText(String.valueOf(location.getLongitude()));
+                            ARLat.setText(String.valueOf(latitude));
+                            ARLong.setText(String.valueOf(longitude));
                             // Logic to handle location object
 
                                 arSceneView
@@ -149,30 +166,35 @@ public class LocationActivity extends AppCompatActivity {
                                                         // If our locationScene object hasn't been setup yet, this is a good time to do it
                                                         // We know that here, the AR components have been initiated.
                                                         locationScene = new LocationScene(act, arSceneView);
-                                                        locationScene.setRefreshAnchorsAsLocationChanges(true);
+                                                        //locationScene.setRefreshAnchorsAsLocationChanges(true);
                                                         locationScene.setDebugEnabled(true);
 
-                                                        // Now lets create our location markers.
-                                                        // First, a layout
-                                                        LocationMarker layoutLocationMarker = new LocationMarker(
-                                                                longitude,
-                                                                latitude,
-                                                                getExampleView()
-                                                        );
 
                                                         // Adding the marker
-                                                        double actualLong = location.getLongitude();
-                                                        double actualLat = location.getLatitude();
-                                                        double range = 0.00005;
+                                                        double actualLong = Math.abs(location.getLongitude());
+                                                        double actualLat = Math.abs(location.getLatitude());
+                                                        double range = 0.5;
 
-                                                        if ((actualLong - longitude <= range && actualLong - longitude >= -1.0f * range)
-                                                                && (actualLat - latitude <= range && actualLat - latitude >= -1.0f * range))
+                                                        if ((actualLong - Math.abs(longitude) <= range && actualLong - Math.abs(longitude) >= -1.0f * range)
+                                                                && (actualLat - Math.abs(latitude) <= range && actualLat - Math.abs(latitude) >= -1.0f * range))
                                                         {
+                                                            itemAdded.setChecked(true);
+
+                                                            LocationMarker layoutLocationMarker = new LocationMarker(
+                                                                    longitude,
+                                                                    latitude,
+                                                                    getExampleView()
+                                                            );
+
                                                             locationScene.mLocationMarkers.add(layoutLocationMarker);
                                                         }
                                                         else
                                                         {
                                                             Log.v("Range:", "Coordinate not in range");
+                                                            Log.v("DeviceLat:", String.valueOf(actualLat));
+                                                            Log.v("DeviceLong:", String.valueOf(actualLong));
+                                                            Log.v("PointLat:", String.valueOf(latitude));
+                                                            Log.v("PointLong:", String.valueOf(longitude));
                                                         }
                                                     }
 
