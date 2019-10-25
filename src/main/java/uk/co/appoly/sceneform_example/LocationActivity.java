@@ -91,12 +91,6 @@ public class LocationActivity extends AppCompatActivity {
                         .setView(this, R.layout.example_layout)
                         .build();
 
-        // When you build a Renderable, Sceneform loads its resources in the background while returning
-        // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
-        //CompletableFuture<ModelRenderable> andy = ModelRenderable.builder()
-        //        .setSource(this, R.raw.andy)
-        //        .build();
-
         CompletableFuture.allOf(
                 exampleLayout)
                 .handle(
@@ -166,32 +160,20 @@ public class LocationActivity extends AppCompatActivity {
                                                                 getExampleView()
                                                         );
 
-                                                        // An example "onRender" event, called every frame
-                                                        // Updates the layout with the markers distance
-                                                        //layoutLocationMarker.setRenderEvent(new LocationNodeRender() {
-                                                        //    @Override
-                                                        //    public void render(LocationNode node) {
-                                                        //        View eView = exampleLayoutRenderable.getView();
-                                                        //TextView distanceTextView = eView.findViewById(R.id.textView2);
-                                                        //distanceTextView.setText(node.getDistance() + "M");
-                                                        //    }
-                                                        //});
                                                         // Adding the marker
+                                                        double actualLong = location.getLongitude();
+                                                        double actualLat = location.getLatitude();
+                                                        double range = 0.00005;
 
-                                                        if ((location.getLongitude() - longitude <= 0.00005 && location.getLongitude() - longitude >= 0.0) && (location.getLatitude() - latitude <= 0.00005 && location.getLatitude() - latitude >= 0)) {
+                                                        if ((actualLong - longitude <= range && actualLong - longitude >= -1.0f * range)
+                                                                && (actualLat - latitude <= range && actualLat - latitude >= -1.0f * range))
+                                                        {
                                                             locationScene.mLocationMarkers.add(layoutLocationMarker);
                                                         }
                                                         else
                                                         {
                                                             Log.v("Range:", "Coordinate not in range");
                                                         }
-
-                                                        // Adding a simple location marker of a 3D model
-                                                        //locationScene.mLocationMarkers.add(
-                                                        //        new LocationMarker(
-                                                        //                34.002997,
-                                                        //                -81.016109,
-                                                        //                getAndy()));
                                                     }
 
                                                     Frame frame = arSceneView.getArFrame();
@@ -244,25 +226,6 @@ public class LocationActivity extends AppCompatActivity {
 
         return base;
     }
-
-    /***
-     * Example Node of a 3D model
-     *
-     * @return
-     */
-    /*
-    private Node getAndy() {
-        Node base = new Node();
-        base.setRenderable(andyRenderable);
-        Context c = this;
-        base.setOnTapListener((v, event) -> {
-            Toast.makeText(
-                    c, "Andy touched.", Toast.LENGTH_LONG)
-                    .show();
-        });
-        return base;
-    }
-     */
 
     /**
      * Make sure we call locationScene.resume();
