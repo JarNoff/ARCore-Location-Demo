@@ -24,11 +24,11 @@
       android:id="@+id/ar_scene_view"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:layout_gravity="top"/>
+      android:layout_gravity="top" />
 
   <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="68dp"
+      android:layout_height="wrap_content"
       android:orientation="horizontal">
 
     <TextView
@@ -70,6 +70,38 @@
         android:layout_weight="1"
         android:text="@string/checkButton"
         android:textColor="@android:color/holo_orange_dark" />
+
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="227dp"
+      android:layout_height="59dp"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentTop="true"
+      android:layout_marginTop="35dp"
+      android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/LatRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:text="TextView"
+        android:textColor="@android:color/holo_orange_dark" />
+
+    <TextView
+        android:id="@+id/LongRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:text="TextView"
+        android:textColor="@android:color/holo_orange_dark" />
+
+    <TextView
+        android:id="@+id/locChange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
   </LinearLayout>
 
 </RelativeLayout>

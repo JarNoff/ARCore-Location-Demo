@@ -18,6 +18,7 @@ package uk.co.appoly.sceneform_example;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -72,14 +73,16 @@ public class LocationActivity extends AppCompatActivity {
     // Our ARCore-Location scene
     private LocationScene locationScene;
 
-    private float latitude = 34.002985f;
-    private float longitude = -81.016097f;
-
+    private float latitude = 34.002834f;
+    private float longitude = -81.015871f;
     private TextView deviceLong;
     private TextView deviceLat;
     private TextView ARLong;
     private TextView ARLat;
+    private TextView longRange;
+    private TextView latRange;
     private CheckBox itemAdded;
+    private TextView locChange;
 
 
     @Override
@@ -94,6 +97,10 @@ public class LocationActivity extends AppCompatActivity {
         ARLong = findViewById(R.id.ARLong);
         ARLat = findViewById(R.id.ARLat);
         itemAdded = findViewById(R.id.checkBox);
+        longRange = findViewById(R.id.LongRange);
+        latRange = findViewById(R.id.LatRange);
+        locChange = findViewById(R.id.locChange);
+        locChange.setText("0");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -138,10 +145,6 @@ public class LocationActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
-                        Log.v("Long:", String.valueOf(location.getLongitude()));
-                        Log.v("Lat:", String.valueOf(location.getLatitude()));
-                        Log.v("Accuracy:", String.valueOf(location.getAccuracy()));
-                        Log.v("Altitude:", String.valueOf(location.getAltitude()));
                         if (location != null) {
                             Log.v("Long:", String.valueOf(location.getLongitude()));
                             Log.v("Lat:", String.valueOf(location.getLatitude()));
@@ -166,18 +169,22 @@ public class LocationActivity extends AppCompatActivity {
                                                         // If our locationScene object hasn't been setup yet, this is a good time to do it
                                                         // We know that here, the AR components have been initiated.
                                                         locationScene = new LocationScene(act, arSceneView);
-                                                        //locationScene.setRefreshAnchorsAsLocationChanges(true);
+                                                        locationScene.setRefreshAnchorsAsLocationChanges(true);
+                                                        locationScene.setDistanceLimit(30);
                                                         locationScene.setDebugEnabled(true);
 
 
                                                         // Adding the marker
                                                         double actualLong = Math.abs(location.getLongitude());
                                                         double actualLat = Math.abs(location.getLatitude());
-                                                        double range = 0.5;
+                                                        double range = 0.005;
 
-                                                        if ((actualLong - Math.abs(longitude) <= range && actualLong - Math.abs(longitude) >= -1.0f * range)
-                                                                && (actualLat - Math.abs(latitude) <= range && actualLat - Math.abs(latitude) >= -1.0f * range))
-                                                        {
+                                                        longRange.setText(String.valueOf(actualLong - Math.abs(longitude)));
+                                                        latRange.setText(String.valueOf(actualLat - Math.abs(latitude)));
+
+                                                        //if ((actualLong - Math.abs(longitude) <= range && actualLong - Math.abs(longitude) >= -1.0f * range)
+                                                        //        && (actualLat - Math.abs(latitude) <= range && actualLat - Math.abs(latitude) >= -1.0f * range))
+                                                        //{
                                                             itemAdded.setChecked(true);
 
                                                             LocationMarker layoutLocationMarker = new LocationMarker(
@@ -187,15 +194,15 @@ public class LocationActivity extends AppCompatActivity {
                                                             );
 
                                                             locationScene.mLocationMarkers.add(layoutLocationMarker);
-                                                        }
-                                                        else
-                                                        {
-                                                            Log.v("Range:", "Coordinate not in range");
-                                                            Log.v("DeviceLat:", String.valueOf(actualLat));
-                                                            Log.v("DeviceLong:", String.valueOf(actualLong));
-                                                            Log.v("PointLat:", String.valueOf(latitude));
-                                                            Log.v("PointLong:", String.valueOf(longitude));
-                                                        }
+                                                        //}
+                                                        //else
+                                                        //{
+                                                        //    Log.v("Range:", "Coordinate not in range");
+                                                        //    Log.v("DeviceLat:", String.valueOf(actualLat));
+                                                        //    Log.v("DeviceLong:", String.valueOf(actualLong));
+                                                        //    Log.v("PointLat:", String.valueOf(latitude));
+                                                        //    Log.v("PointLong:", String.valueOf(longitude));
+                                                        //}
                                                     }
 
                                                     Frame frame = arSceneView.getArFrame();
@@ -366,3 +373,32 @@ public class LocationActivity extends AppCompatActivity {
         loadingMessageSnackbar = null;
     }
 }
+
+/*
+class LocationHandler implements LocationListener {
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras)
+    {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider)
+    {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider)
+    {
+
+    }
+}
+ */
